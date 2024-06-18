@@ -1,0 +1,129 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- Eje vertical -->
+    <View
+        android:id="@+id/center_line_vertical"
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:background="#FFFFFF"/>
+
+    <!-- Eje horizontal -->
+    <View
+        android:id="@+id/center_line_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_centerVertical="true"
+        android:background="#FFFFFF"/>
+
+    <FrameLayout
+        android:id="@+id/left_side"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#AA000000"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/center_line_vertical">
+
+        <!-- Aquí ya no se incluirá el indicador de frenado -->
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/right_side"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#AA000000"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/center_line_vertical">
+
+        <!-- Aquí ya no se incluirá el indicador de aceleración -->
+    </FrameLayout>
+
+    <!-- Indicador de frenado que va desde arriba hasta abajo -->
+    <View
+        android:id="@+id/brakeIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:background="#FF0000"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/brakeTopIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+    android:layout_alignParentBottom="true"
+    android:background="#FFFF00"
+    android:visibility="gone"/>
+
+    <!-- Indicador de aceleración que va desde arriba hasta abajo -->
+    <View
+        android:id="@+id/accelerateIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:background="#00FF00"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/accelerateTopIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+    android:layout_alignParentBottom="true"
+    android:background="#FFFF00"
+    android:visibility="gone"/>
+
+
+    <!-- Botones visibles con opacidad -->
+    <Button
+        android:id="@+id/button_left_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@id/center_line_vertical"
+        android:layout_above="@id/center_line_horizontal"
+        android:background="#88FF0000"
+    android:visibility="visible"
+    android:alpha="0.5"/>
+
+    <Button
+        android:id="@+id/button_left_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/center_line_vertical"
+        android:layout_below="@id/center_line_horizontal"
+        android:background="#8800FF00"
+    android:alpha="0.5"/>
+
+    <Button
+        android:id="@+id/button_right_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/center_line_vertical"
+        android:layout_above="@id/center_line_horizontal"
+        android:background="#880000FF"
+    android:visibility="visible"
+    android:alpha="0.5"/>
+
+    <Button
+        android:id="@+id/button_right_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/center_line_vertical"
+        android:layout_below="@id/center_line_horizontal"
+        android:background="#88FFFF00"
+    android:visibility="visible"
+    android:alpha="0.5"/>
+</RelativeLayout>
