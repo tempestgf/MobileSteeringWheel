@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#1a1b26">
+
+    <!-- Título de la app -->
+    <TextView
+        android:id="@+id/app_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="24sp"
+        android:textColor="#c0caf5"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:paddingBottom="16dp"/>
+
+    <!-- Versión de la app -->
+    <TextView
+        android:id="@+id/app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_version"
+        android:textSize="16sp"
+        android:textColor="#a9b1d6"
+        android:layout_gravity="center"
+        android:paddingBottom="24dp"/>
+
+    <!-- Descripción de la app -->
+    <TextView
+        android:id="@+id/app_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_description"
+        android:textSize="16sp"
+        android:textColor="#a9b1d6"
+        android:paddingBottom="24dp"
+        android:lineSpacingMultiplier="1.2"/>
+
+    <!-- Autores -->
+    <TextView
+        android:id="@+id/app_authors"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_authors"
+        android:textSize="16sp"
+        android:textColor="#a9b1d6"
+        android:paddingBottom="32dp"/>
+
+    <!-- Botón para volver -->
+    <Button
+        android:id="@+id/button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_background"
+        android:text="@string/back_button"
+        android:textColor="#c0caf5"
+        android:layout_gravity="center"/>
+</LinearLayout>

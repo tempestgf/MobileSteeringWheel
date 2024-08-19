@@ -1,3 +1,18 @@
 <resources>
-    <string name="app_name">Steering Wheel</string>
+    <string name="app_name">Steering Wheel App</string>
+    <string name="app_version">Version 1.0</string>
+    <string name="app_description">This application allows you to control a virtual steering wheel using various input methods like WiFi, USB tethering, and manual IP input.</string>
+    <string name="app_authors">Developed by: Tempestgf</string>
+    <string name="back_button">Back</string>
+    <string name="button_left_top">Left Top Button</string>
+    <string name="button_left_bottom">Left Bottom Button</string>
+    <string name="button_right_top">Right Top Button</string>
+    <string name="button_right_bottom">Right Bottom Button</string>
+    <string-array name="orientation_options">
+        <item>Auto</item>
+        <item>Screen faces on top</item>
+        <item>Screen faces on your body</item>
+    </string-array>
 </resources>
+
+

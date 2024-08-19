@@ -9,4 +9,21 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowNoTitle">true</item>
     </style>
+
+    <!-- Tokyo Night Dialog Theme -->
+    <style name="TokyoNightDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">#1a1b26</item>
+        <item name="android:textColorPrimary">#c0caf5</item>
+        <item name="android:textColorSecondary">#a9b1d6</item>
+        <item name="android:colorAccent">#7aa2f7</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/TokyoNightDialogButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/TokyoNightDialogButton</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/TokyoNightDialogButton</item>
+    </style>
+
+    <!-- Custom Button Style -->
+    <style name="TokyoNightDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">#7aa2f7</item>
+        <item name="android:background">?attr/selectableItemBackground</item> <!-- Añade un fondo con ripple effect -->
+    </style>
 </resources>

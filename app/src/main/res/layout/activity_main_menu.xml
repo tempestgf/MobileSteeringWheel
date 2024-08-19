@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#1a1b26">
+
+    <!-- Logo de la Aplicación -->
+    <ImageView
+        android:id="@+id/app_logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="48dp"
+        android:src="@drawable/minimal" />
+
+    <!-- Texto de Bienvenida -->
+    <TextView
+        android:id="@+id/welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mobile Wheel"
+        android:textSize="24sp"
+        android:textColor="#c0caf5"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="sans-serif-light"/>
+
+    <!-- Botones Centrados Verticalmente -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button_start"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:textColor="#ffffff"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:background="@drawable/tokyo_button"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/button_settings"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textColor="#ffffff"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:background="@drawable/tokyo_button"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/button_about"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="About"
+            android:textColor="#ffffff"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:background="@drawable/tokyo_button" />
+    </LinearLayout>
+
+    <!-- Pie de página -->
+    <TextView
+        android:id="@+id/footer_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="© 2024 Tempestgf"
+        android:textColor="#565f89"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:fontFamily="sans-serif-light"
+        android:textSize="12sp" />
+</RelativeLayout>

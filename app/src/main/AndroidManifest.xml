@@ -1,16 +1,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.steeringwheel">
+
+    <!-- Permisos -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-feature android:name="android.hardware.touchscreen.multitouch" android:required="true" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/minimal"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/minimal"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:screenOrientation="landscape"
+        tools:ignore="DiscouragedApi">
 
+        <!-- SplashActivity como LAUNCHER -->
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -19,12 +32,21 @@
             </intent-filter>
         </activity>
 
-        <!-- Declaración del nuevo servicio -->
+        <!-- MainActivity ya no es LAUNCHER -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="landscape" />
+
+        <!-- Otras actividades -->
+        <activity android:name=".AboutActivity" android:screenOrientation="landscape" />
+        <activity android:name=".SteeringWheelActivity" android:screenOrientation="landscape" />
+        <activity android:name=".SettingsActivity" android:screenOrientation="landscape" />
+
+        <!-- Servicio -->
         <service
             android:name=".NotificationBlockerService"
             android:enabled="true"
             android:exported="false" />
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
