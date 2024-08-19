@@ -111,6 +111,10 @@ def set_axis(device_id, axis_id, value):
         logging.error(f"Failed to set axis {axis_id} on device {device_id}.")
 
 def map_value(value, in_min, in_max, out_min, out_max):
+    # Asegura que el valor esté dentro del rango de entrada
+    value = max(min(value, in_max), in_min)
+
+    # Realiza el mapeo de valor
     return int((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
 
 def process_critical_message(device_id, message, update_ui_callback=None):
