@@ -3,6 +3,8 @@ An app that simulates your phone as a steering wheel for PC.
 
 # Python Server
 
+[![Release python-server](https://img.shields.io/badge/Release-python--server-purple?style=for-the-badge)](https://github.com/tempestgf/MobileWheel/releases/tag/python-server)
+
 The Python server in this project monitors commands sent from the client application and displays the corresponding logs in real-time. The server runs a graphical interface that allows you to start and stop the server, observe the status of various input commands (such as acceleration, braking, and steering), and view a live log of all actions performed by the server. This setup provides a straightforward way to manage and monitor the communication between the client and server.
 
 
@@ -11,6 +13,8 @@ The Python server in this project monitors commands sent from the client applica
 
 
 # Android Client
+
+[![Release android-client](https://img.shields.io/badge/Release-android--client-lightblue?style=for-the-badge)](https://github.com/tempestgf/MobileWheel/releases/tag/android-client)
 
 
 ### Menu
