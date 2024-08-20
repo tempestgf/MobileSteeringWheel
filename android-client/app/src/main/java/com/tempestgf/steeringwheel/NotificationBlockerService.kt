@@ -1,4 +1,4 @@
-package com.example.steeringwheel
+package com.tempestgf.steeringwheel
 
 import android.app.Service
 import android.content.Intent
@@ -6,6 +6,7 @@ import android.os.IBinder
 import android.view.WindowManager
 import android.view.LayoutInflater
 import android.view.View
+import com.tempestgf.steeringwheel.R
 
 class NotificationBlockerService : Service() {
 

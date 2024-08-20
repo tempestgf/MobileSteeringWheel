@@ -1,4 +1,4 @@
-package com.example.steeringwheel.ui.theme
+package com.tempestgf.steeringwheel.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

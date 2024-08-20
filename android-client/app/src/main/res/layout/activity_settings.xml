@@ -37,7 +37,7 @@
                 android:id="@+id/steering_angle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:max="90"
+                android:max="180"
                 android:progress="90"
                 android:layout_weight="3"
                 android:progressTint="#7aa2f7"

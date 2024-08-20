@@ -1,4 +1,4 @@
-package com.example.steeringwheel
+package com.tempestgf.steeringwheel
 
 import android.os.Bundle
 import android.widget.SeekBar
@@ -25,7 +25,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // Cargar valores guardados
         val sharedPrefs = getSharedPreferences("steering_prefs", MODE_PRIVATE)
-        val savedAngle = sharedPrefs.getInt("steering_angle", 90)
+        val savedAngle = sharedPrefs.getInt("steering_angle", 180)
         val savedSwipeThreshold = sharedPrefs.getFloat(PREF_SWIPE_THRESHOLD, DEFAULT_SWIPE_THRESHOLD)
         val savedClickTimeLimit = sharedPrefs.getFloat(PREF_CLICK_TIME_LIMIT, DEFAULT_CLICK_TIME_LIMIT)
         val savedAcceleratorSensitivity = sharedPrefs.getFloat(PREF_ACCELERATOR_SENSITIVITY, DEFAULT_ACCELERATOR_SENSITIVITY)
@@ -161,3 +161,4 @@ class SettingsActivity : AppCompatActivity() {
         const val DEFAULT_BRAKE_SENSITIVITY = 4.0f // sensibilidad predeterminada
     }
 }
+

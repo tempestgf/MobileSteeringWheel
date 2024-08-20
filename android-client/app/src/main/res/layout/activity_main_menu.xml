@@ -8,10 +8,12 @@
     <!-- Logo de la Aplicación -->
     <ImageView
         android:id="@+id/app_logo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="48dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/minimal" />
 
     <!-- Texto de Bienvenida -->
@@ -20,17 +22,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Mobile Wheel"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textColor="#c0caf5"
+        android:layout_below="@id/app_logo"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"
-        android:fontFamily="sans-serif-light"/>
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif-black"/>
 
     <!-- Botones Centrados Verticalmente -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/welcome_text"
+        android:layout_centerHorizontal="true"
         android:orientation="vertical"
         android:gravity="center">
 
@@ -41,9 +45,10 @@
             android:text="Start"
             android:textColor="#ffffff"
             android:textAllCaps="false"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-black"
             android:background="@drawable/tokyo_button"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="12dp" />
 
         <Button
             android:id="@+id/button_settings"
@@ -52,9 +57,10 @@
             android:text="Settings"
             android:textColor="#ffffff"
             android:textAllCaps="false"
-            android:textSize="18sp"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-black"
             android:background="@drawable/tokyo_button"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="12dp" />
 
         <Button
             android:id="@+id/button_about"
@@ -63,8 +69,10 @@
             android:text="About"
             android:textColor="#ffffff"
             android:textAllCaps="false"
-            android:textSize="18sp"
-            android:background="@drawable/tokyo_button" />
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-black"
+            android:background="@drawable/tokyo_button"
+            android:layout_marginBottom="12dp" />
     </LinearLayout>
 
     <!-- Pie de página -->
@@ -76,7 +84,7 @@
         android:textColor="#565f89"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:fontFamily="sans-serif-light"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-black"
         android:textSize="12sp" />
 </RelativeLayout>

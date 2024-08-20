@@ -1,4 +1,4 @@
-package com.example.steeringwheel
+package com.tempestgf.steeringwheel
 
 import android.content.Context
 import android.util.AttributeSet

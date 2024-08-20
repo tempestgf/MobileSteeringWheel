@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.steeringwheel">
+    package="com.tempestgf.steeringwheel">
 
     <!-- Permisos -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-feature android:name="android.hardware.touchscreen.multitouch" android:required="true" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/minimal"
@@ -23,7 +24,7 @@
 
         <!-- SplashActivity como LAUNCHER -->
         <activity
-            android:name=".SplashActivity"
+            android:name="com.tempestgf.steeringwheel.SplashActivity"
             android:exported="true"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -34,18 +35,18 @@
 
         <!-- MainActivity ya no es LAUNCHER -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.tempestgf.steeringwheel.MainActivity"
             android:exported="true"
             android:screenOrientation="landscape" />
 
         <!-- Otras actividades -->
-        <activity android:name=".AboutActivity" android:screenOrientation="landscape" />
+        <activity android:name="com.tempestgf.steeringwheel.AboutActivity" android:screenOrientation="landscape" />
         <activity android:name=".SteeringWheelActivity" android:screenOrientation="landscape" />
-        <activity android:name=".SettingsActivity" android:screenOrientation="landscape" />
+        <activity android:name="com.tempestgf.steeringwheel.SettingsActivity" android:screenOrientation="landscape" />
 
         <!-- Servicio -->
         <service
-            android:name=".NotificationBlockerService"
+            android:name="com.tempestgf.steeringwheel.NotificationBlockerService"
             android:enabled="true"
             android:exported="false" />
     </application>

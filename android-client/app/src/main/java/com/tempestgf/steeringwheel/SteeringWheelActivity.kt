@@ -1,5 +1,6 @@
-package com.example.steeringwheel
+package com.tempestgf.steeringwheel
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -29,7 +30,16 @@ import java.net.DatagramSocket
 import java.net.Inet4Address
 import java.net.NetworkInterface
 import java.net.SocketTimeoutException
-
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.AnimatorListenerAdapter
+import android.media.AudioAttributes
+import android.media.SoundPool
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 class SteeringWheelActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
@@ -41,19 +51,20 @@ class SteeringWheelActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var buttonLeftBottom: Button
     private lateinit var buttonRightTop: Button
     private lateinit var buttonRightBottom: Button
-    private var serverAddress = "192.168.176.150"  // IP para USB tethering
+    private var serverAddress = "192.168.176.150"
     private val serverPort = 12345
     private var socket: Socket? = null
     private var outputStream: DataOutputStream? = null
     private var lastY: Float = 0f
-    private val threshold = 0.00f // Umbral para filtrar datos insignificantes
+    private val threshold = 0.010f // Umbral para filtrar datos insignificantes
     private var maxSteeringAngle: Float = 90f // Declarar como Float en lugar de Int
     private var swipeThresholdInPx: Float = 0f
     private var accelerationSensitivity: Float = 0.5f // Valor por defecto
     private var brakeSensitivity: Float = 0.5f // Valor por defecto
     private var clickTimeLimit: Float = 0.25f // Valor por defecto
-    private var swipeThreshold: Float = 4.0f // Valor por defecto en mm
-
+    private lateinit var soundPool: SoundPool
+    private var soundId: Int = 0
+    private lateinit var vibrator: Vibrator
 
 
     // Cola para comandos a ser enviados al servidor
@@ -78,11 +89,27 @@ class SteeringWheelActivity : AppCompatActivity(), SensorEventListener {
             Log.e("SteeringWheelActivity", "Accelerometer sensor not available")
         }
 
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_GAME)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+
+        soundPool = SoundPool.Builder()
+            .setMaxStreams(1)
+            .setAudioAttributes(audioAttributes)
+            .build()
+
+        soundId = soundPool.load(this, R.raw.gear_shift, 1)
+
+        vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+
         showConnectionOptions()
     }
-
-
-
 
     private fun initializeUIElements() {
         accelerateIndicator = findViewById(R.id.accelerateIndicator)
@@ -161,37 +188,52 @@ class SteeringWheelActivity : AppCompatActivity(), SensorEventListener {
     override fun onDestroy() {
         super.onDestroy()
         sensorManager.unregisterListener(this)
+        soundPool.release() // Release SoundPool resources
         closeConnection()
     }
 
     private fun limitSteeringAngle(angle: Float, maxAngle: Float): Float {
         return angle.coerceIn(-maxAngle, maxAngle)
     }
-
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let {
             if (it.sensor.type == Sensor.TYPE_ACCELEROMETER) {
-                val rawY = it.values[1]  // Usamos el eje Y para la rotación lateral
+                val rawY = it.values[1]  // Eje Y: rotación lateral
+                val rawX = it.values[0]  // Eje X: rotación frontal
 
-                // Limitar el ángulo de giro usando el maxSteeringAngle calculado
-                val limitedY = limitSteeringAngle(rawY, maxSteeringAngle)
+                // Calcular el ángulo en grados usando atan2
+                var steeringAngle = Math.toDegrees(Math.atan2(rawY.toDouble(), rawX.toDouble())).toFloat()
+
+                // Asegurar que el ángulo esté dentro del rango -180 a 180 grados
+                if (steeringAngle > 180) {
+                    steeringAngle -= 360
+                } else if (steeringAngle < -180) {
+                    steeringAngle += 360
+                }
+
+                // Normalizar el ángulo basado en el ángulo máximo configurado en Settings
+                val normalizedY = mapSteeringAngleToServerRange(steeringAngle, maxSteeringAngle)
+
+                val limitedY = limitSteeringAngle(normalizedY, maxSteeringAngle)
 
                 // Mostrar indicadores si se alcanza el ángulo máximo
+                val rightIndicator = findViewById<View>(R.id.right_max_angle_indicator)
+                val leftIndicator = findViewById<View>(R.id.left_max_angle_indicator)
+
                 if (limitedY >= maxSteeringAngle) {
-                    findViewById<View>(R.id.right_max_angle_indicator).visibility = View.VISIBLE
+                    rightIndicator.visibility = View.VISIBLE
                 } else {
-                    findViewById<View>(R.id.right_max_angle_indicator).visibility = View.GONE
+                    rightIndicator.visibility = View.GONE
                 }
 
                 if (limitedY <= -maxSteeringAngle) {
-                    findViewById<View>(R.id.left_max_angle_indicator).visibility = View.VISIBLE
+                    leftIndicator.visibility = View.VISIBLE
                 } else {
-                    findViewById<View>(R.id.left_max_angle_indicator).visibility = View.GONE
+                    leftIndicator.visibility = View.GONE
                 }
 
                 if (Math.abs(limitedY - lastY) > threshold) {
                     lastY = limitedY
-                    //Log.v("MainActivity", "Accelerometer limited data: y=$limitedY")
                     queueCommand("A:$limitedY")
                 }
             }
@@ -201,7 +243,31 @@ class SteeringWheelActivity : AppCompatActivity(), SensorEventListener {
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Do something here if sensor accuracy changes
     }
+    private fun mapSteeringAngleToServerRange(angle: Float, maxSteeringAngle: Float): Float {
+        // Mapea el ángulo desde el rango [-maxSteeringAngle, maxSteeringAngle] al rango [-10, 10]
+        return (angle / maxSteeringAngle) * 10f
+    }
 
+    override fun onResume() {
+        super.onResume()
+
+        val sharedPrefs = getSharedPreferences("steering_prefs", MODE_PRIVATE)
+        val maxSteeringAngle = sharedPrefs.getInt("steering_angle", 90) // Valor por defecto 90°
+
+        accelerationSensitivity = sharedPrefs.getFloat(SettingsActivity.PREF_ACCELERATOR_SENSITIVITY, SettingsActivity.DEFAULT_ACCELERATOR_SENSITIVITY)
+        brakeSensitivity = sharedPrefs.getFloat(SettingsActivity.PREF_BRAKE_SENSITIVITY, SettingsActivity.DEFAULT_BRAKE_SENSITIVITY)
+        clickTimeLimit = sharedPrefs.getFloat(SettingsActivity.PREF_CLICK_TIME_LIMIT, SettingsActivity.DEFAULT_CLICK_TIME_LIMIT)
+        val savedSwipeThreshold = sharedPrefs.getFloat(SettingsActivity.PREF_SWIPE_THRESHOLD, SettingsActivity.DEFAULT_SWIPE_THRESHOLD)
+
+        swipeThresholdInPx = savedSwipeThreshold * resources.displayMetrics.xdpi / 25.4f
+
+        updateMaxSteeringAngle(maxSteeringAngle)
+    }
+
+    private fun updateMaxSteeringAngle(angle: Int) {
+        // Guardamos el ángulo máximo de giro permitido
+        this.maxSteeringAngle = angle.toFloat()
+    }
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP -> {
@@ -221,46 +287,51 @@ class SteeringWheelActivity : AppCompatActivity(), SensorEventListener {
     private fun handleButtonClick(command: String) {
         Log.d("MainActivity", "Button clicked: $command")
         queueCommand(command)
+        // Iniciar la animación después de enviar el comando
+        animateButtonPress(findViewById(R.id.button_right_top)) // Ejemplo de botón
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupButtonListeners() {
-        val buttonLeftTop: Button = findViewById(R.id.button_left_top)
-        val buttonLeftBottom: Button = findViewById(R.id.button_left_bottom)
-        val buttonRightTop: Button = findViewById(R.id.button_right_top)
-        val buttonRightBottom: Button = findViewById(R.id.button_right_bottom)
-
         val buttonTouchListener = View.OnTouchListener { v, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    v.tag = Pair(event.y, System.currentTimeMillis())  // Save initial Y position and time
+                    // Guardar la posición inicial y el tiempo
+                    v.tag = Pair(event.y, System.currentTimeMillis())
+
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    val (initialY, initialTime) = v.tag as Pair<Float, Long>
+                    val (initialY, _) = v.tag as Pair<Float, Long>
                     val deltaY = event.y - initialY
 
                     if (Math.abs(deltaY) > swipeThresholdInPx) {
+                        // Es un slide, así que actualiza el brake o accelerate según el botón
                         when (v.id) {
                             R.id.button_left_top, R.id.button_left_bottom -> updateBrake(deltaY)
                             R.id.button_right_top, R.id.button_right_bottom -> updateAccelerate(deltaY)
                         }
-                        return@OnTouchListener true  // Consumes the event as a slide
+                        return@OnTouchListener true // Consumir el evento como un deslizamiento
                     }
                 }
                 MotionEvent.ACTION_UP -> {
                     val (initialY, initialTime) = v.tag as Pair<Float, Long>
+                    val deltaY = event.y - initialY
                     val elapsedTime = (System.currentTimeMillis() - initialTime) / 1000.0
 
-                    if (Math.abs(event.y - initialY) <= swipeThresholdInPx && elapsedTime <= clickTimeLimit) {
+                    if (Math.abs(deltaY) <= swipeThresholdInPx && elapsedTime <= clickTimeLimit) {
+                        // Esto es un "click", así que ejecuta la animación
+                        animateButtonPress(v)
+                        playShiftSound()
+                        vibrate(75)                        // Ejecuta la acción del botón según el ID
                         when (v.id) {
                             R.id.button_left_top -> queueCommand("D")
                             R.id.button_left_bottom -> queueCommand("E")
                             R.id.button_right_top -> queueCommand("F")
                             R.id.button_right_bottom -> queueCommand("G")
                         }
-                        v.performClick()  // Trigger button's click action
+                        v.performClick() // Activar la acción del click
                     } else {
-                        // Detect end of slide
+                        // Esto fue un slide, así que asegúrate de detener el brake o accelerate
                         when (v.id) {
                             R.id.button_left_top, R.id.button_left_bottom -> stopBrake()
                             R.id.button_right_top, R.id.button_right_bottom -> stopAccelerate()
@@ -271,12 +342,78 @@ class SteeringWheelActivity : AppCompatActivity(), SensorEventListener {
             true
         }
 
-        // Assign the same listener to all buttons
+        // Asigna el listener a todos los botones
         buttonLeftTop.setOnTouchListener(buttonTouchListener)
         buttonLeftBottom.setOnTouchListener(buttonTouchListener)
         buttonRightTop.setOnTouchListener(buttonTouchListener)
         buttonRightBottom.setOnTouchListener(buttonTouchListener)
     }
+    private fun playShiftSound() {
+        CoroutineScope(Dispatchers.IO).launch {
+            soundPool.play(soundId, 1f, 1f, 1, 0, 1f)
+        }
+    }
+
+    private fun vibrate(duration: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                vibrator.vibrate(duration)
+            }
+        }
+    }
+
+    private fun animateButtonPress(view: View) {
+        // Ejecutar la animación en un Coroutine para no bloquear el hilo principal
+        CoroutineScope(Dispatchers.Main).launch {
+            // Asegúrate de que el botón sea siempre interactivo
+            view.isClickable = true
+
+            // Crear animación de rotación en el eje Y
+            val rotationY = when (view.id) {
+                R.id.button_left_top, R.id.button_left_bottom -> -5f
+                R.id.button_right_top, R.id.button_right_bottom -> 5f
+                else -> 0f
+            }
+
+            val rotateY = ObjectAnimator.ofFloat(view, "rotationY", rotationY)
+            val scaleX = ObjectAnimator.ofFloat(view, "scaleX", 0.98f)
+            val scaleY = ObjectAnimator.ofFloat(view, "scaleY", 0.98f)
+            val rotateYBack = ObjectAnimator.ofFloat(view, "rotationY", 0f)
+            val scaleXBack = ObjectAnimator.ofFloat(view, "scaleX", 1.0f)
+            val scaleYBack = ObjectAnimator.ofFloat(view, "scaleY", 1.0f)
+
+            val pressSet = AnimatorSet().apply {
+                playTogether(rotateY, scaleX, scaleY)
+                duration = 10
+            }
+
+            val releaseSet = AnimatorSet().apply {
+                playTogether(rotateYBack, scaleXBack, scaleYBack)
+                duration = 10
+            }
+
+            // Iniciar la animación de presionar el botón
+            pressSet.start()
+
+            // Escuchar cuando la animación termina
+            pressSet.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    releaseSet.start()
+                }
+            })
+
+            // Durante y después de la animación, el botón seguirá siendo clicable
+            releaseSet.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    view.isClickable = true
+                }
+            })
+        }
+    }
+
+
 
     private fun startBrake() {
         brakeIndicator.visibility = View.VISIBLE
@@ -420,31 +557,6 @@ class SteeringWheelActivity : AppCompatActivity(), SensorEventListener {
 
     private fun isConnected(): Boolean {
         return socket?.isConnected == true && !socket!!.isClosed
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        val sharedPrefs = getSharedPreferences("steering_prefs", MODE_PRIVATE)
-        val maxSteeringAngle = sharedPrefs.getInt("steering_angle", 90) // Valor por defecto 90°
-
-        // Cargar sensibilidades del acelerador, freno, click time limit y swipe threshold
-        accelerationSensitivity = sharedPrefs.getFloat(SettingsActivity.PREF_ACCELERATOR_SENSITIVITY, SettingsActivity.DEFAULT_ACCELERATOR_SENSITIVITY)
-        brakeSensitivity = sharedPrefs.getFloat(SettingsActivity.PREF_BRAKE_SENSITIVITY, SettingsActivity.DEFAULT_BRAKE_SENSITIVITY)
-        clickTimeLimit = sharedPrefs.getFloat(SettingsActivity.PREF_CLICK_TIME_LIMIT, SettingsActivity.DEFAULT_CLICK_TIME_LIMIT)
-        val savedSwipeThreshold = sharedPrefs.getFloat(SettingsActivity.PREF_SWIPE_THRESHOLD, SettingsActivity.DEFAULT_SWIPE_THRESHOLD)
-
-        // Convertir swipe threshold de mm a píxeles
-        swipeThresholdInPx = savedSwipeThreshold * resources.displayMetrics.xdpi / 25.4f
-
-        // Aplicar el ángulo máximo al volante
-        updateMaxSteeringAngle(maxSteeringAngle)
-    }
-    private fun updateMaxSteeringAngle(angle: Int) {
-        // Convertir el ángulo a radianes y mapearlo a la escala de 9.81 m/s² (gravedad)
-        val maxAngleInRadians = Math.toRadians(angle.toDouble())
-        val maxAngle = Math.sin(maxAngleInRadians) * 9.81f  // mapea a la escala de 9.81 m/s²
-        this.maxSteeringAngle = maxAngle.toFloat()
     }
 
     private fun discoverServerViaUDP() {

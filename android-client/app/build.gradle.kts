@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.steeringwheel"
+    namespace = "com.tempestgf.steeringwheel"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.steeringwheel"
+        applicationId = "com.tempestgf.steeringwheel"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

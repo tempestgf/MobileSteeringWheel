@@ -1,8 +1,9 @@
-package com.example.steeringwheel
+package com.tempestgf.steeringwheel
 
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.tempestgf.steeringwheel.R
 
 class AboutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

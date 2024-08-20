@@ -29,7 +29,7 @@
         android:background="#414868" />
 
     <!-- Left Side Interceptable Area -->
-    <com.example.steeringwheel.InterceptableFrameLayout
+    <com.tempestgf.steeringwheel.InterceptableFrameLayout
         android:id="@+id/left_side"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -38,7 +38,7 @@
         android:background="#1e2030" />
 
     <!-- Right Side Interceptable Area -->
-    <com.example.steeringwheel.InterceptableFrameLayout
+    <com.tempestgf.steeringwheel.InterceptableFrameLayout
         android:id="@+id/right_side"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -160,5 +160,6 @@
         android:alpha="0.8"
         android:text="Right Bottom"
         android:textColor="#c0caf5" />
+
 
 </RelativeLayout>
