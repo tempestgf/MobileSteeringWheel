@@ -21,7 +21,7 @@ The Python server in this project monitors commands sent from the client applica
 The main menu of the application provides a clean and user-friendly interface where users can easily navigate the core functionalities.
 
 
-![AndroidClient](images/Menu.png)
+![AndroidClient](images/Menu1.png)
 
 ### Wheel
 
@@ -43,4 +43,4 @@ This interface allows users to fine-tune various controls and sensitivities rela
 - **Accelerator Sensitivity:** Adjust the sensitivity of the accelerator pedal, determining how responsive it is to user input. The current sensitivity level is shown next to the slider.
 - **Brake Sensitivity:** Modify the sensitivity of the brake pedal, similar to the accelerator settings. The slider controls the sensitivity, and the current value is displayed.
 
-![Settings](images/Settings.png)
+![Settings](images/Settings1.png)
